@@ -1,18 +1,22 @@
 # Auriga Cafe Rewards
 
-Auriga Cafe Rewards is a full-stack loyalty application for café operations. It combines FastAPI, SQLite, and a Tailwind-based dashboard to manage staff authentication, member records, purchases, point balances, 90-day expiry, and tier notifications.
+Auriga Cafe Rewards is a modular FastAPI loyalty application for café operations. It combines SQLite persistence, a small staff dashboard, and rule-driven rewards logic for member registration, point accrual, tier progression, redemption handling, and notification tracking.
 
 ## Project structure
 
-- `app.py` — FastAPI application and route configuration
-- `database.py` — SQLite schema, business rules, point allocation, and tier logic
-- `templates/index.html` — full staff dashboard UI
-- `static/` — static assets and mount target
-- `.github/reference/` — reference/spec directory
-- `README.md` — project setup and API guide
+- `app.py` — application entrypoint, static mount, template configuration, router registration
+- `database.py` — SQLite setup, schema creation, clock helpers, auth/session persistence, point logic
+- `models/rewards.py` — reward/member-service helpers used by the API layer
+- `schemas/api_models.py` — Pydantic request validation models
+- `api/auth.py` — login/register and Bearer-token validation
+- `api/members.py` — member routes and lookup logic
+- `api/transactions.py` — purchase, redemption, clock, and outbox endpoints
+- `templates/index.html` — FastAPI Jinja staff dashboard UI
+- `static/` — static frontend assets directory
+- `README.md` — setup and usage guide
 - `REASONING.md` — architecture and design rationale
-- `AI_LOGS.md` — session log initializer
-- `cafe_rewards.db` — SQLite database generated at runtime
+- `AI_LOGS.md` — session log
+- `cafe_rewards.db` — generated SQLite database
 
 ## Setup
 
@@ -28,13 +32,13 @@ python -m pip install -r requirements.txt
 ```bash
 cd /workspaces/auriga-cafe-rewards
 source .venv/bin/activate
-python app.py
+uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
 Open the UI at:
 
 ```text
-http://localhost:8001/
+http://localhost:8000/
 ```
 
 ## Default staff credentials
@@ -91,9 +95,11 @@ http://localhost:8001/
 - Regular: 1.0x points per ₹1 spent
 - Silver: 1.2x points per ₹1 spent
 - Gold: 1.5x points per ₹1 spent
-- Platinum: lifetime points >= 5000 triggers 2.0x points (0.3 points per ₹1 spent)
-- Point allocations expire after 90 days unless the points were redeemed first
+- Platinum: lifetime spend or lifetime points thresholds can move the member into Platinum with a 2.0x multiplier
+- Point allocations are tracked with explicit timestamps and 90-day expiry windows
+- Redemptions consume the oldest active allocations first
 - Tier upgrades append notifications to `notifications_outbox`
+- Session tokens are persisted in the SQLite `sessions` table instead of an in-memory dictionary
 
 ## Verification
 
@@ -103,5 +109,5 @@ Run:
 cd /workspaces/auriga-cafe-rewards && pytest -q
 ```
 
-This validates member registration, point accrual, redemptions, tier upgrades, expiry simulation, and list pagination/sorting behavior.
+This validates member registration, points, redemptions, tier upgrades, clock-driven expiry simulation, outbox notifications, and list sorting/pagination.
 

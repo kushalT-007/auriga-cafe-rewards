@@ -434,3 +434,46 @@ This checks:
 - pagination and sorting
 
 If you want, I can also give you a short “feature checklist” you can use while manually testing the app in the browser.
+
+@agent update README.md AND REASONING.md acording to agent
+
+I’m aligning the project docs with the current modular structure and runtime behavior so the README and reasoning notes match what the app actually does now.
+
+Read 
+
+Read 
+
+Replacing 170 lines with 188 lines in , 
+
+
+```
+
+```
+
+```
+
+```
+## ✅ Documentation updated to match the current app
+
+I refreshed both:
+- `README.md`
+- `REASONING.md`
+
+to reflect the current:
+- modular FastAPI structure
+- SQLite-backed session auth
+- app runtime on port 8000
+- actual business logic and verification steps
+
+### Updated areas
+- project layout
+- run instructions
+- API routes
+- auth/session model
+- reward and expiry behavior
+- notification/outbox flow
+- testing guidance
+
+If you want, I can also tighten the wording further so the docs read more like a polished GitHub project description.
+
+Made changes.
