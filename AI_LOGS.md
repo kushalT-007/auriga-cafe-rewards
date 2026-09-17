@@ -298,3 +298,139 @@ The app is currently serving successfully on port 8000 at:
 
 
 Made changes.
+
+then how to check what is fuctionality our application provide
+
+I’ll outline the quickest way to validate the app’s real behavior from the browser and the API so you can confirm each feature without guessing.
+
+## How to check what this app does
+
+This project is a cafe loyalty app, and the main functionality is exposed through the web UI plus the API endpoints. The fastest way to validate it is to use the app in the browser and then confirm the underlying API behavior.
+
+### 1) Open the app
+Visit:
+
+- http://localhost:8000/
+
+You should see the staff dashboard with:
+- login
+- register member
+- search member by phone
+- record purchase
+- redeem points
+- view member directory
+- advance clock
+- inspect outbox notifications
+
+---
+
+### 2) Check the main features manually
+
+#### Login
+Use the default admin account:
+- username: admin
+- password: admin123
+
+If login works, the page should unlock the staff dashboard.
+
+#### Register a member
+Create a member with:
+- first name
+- last name
+- phone number
+- optional email
+
+This creates a member profile in SQLite.
+
+#### Search member by phone
+Enter a phone number and click search:
+- it should return the member’s profile
+- if the phone is valid and exists, the member card populates
+
+#### Record a purchase
+Use a member ID or phone and enter an amount like:
+- 5000
+
+The app should calculate points based on tier rules and save the purchase.
+
+#### Redeem points
+Use a member ID or phone and enter an item name plus points to spend:
+- it should reduce the current points balance
+- it should record the redemption
+
+#### Advance time
+Use the clock controls:
+- enter a number of days, or
+- enter an ISO timestamp
+
+This simulates the 90-day expiry window.
+
+#### Inspect notifications
+The outbox should show pending tier/notification events such as tier upgrades.
+
+---
+
+### 3) Confirm with API calls
+
+The app exposes these key endpoints:
+
+- POST /api/auth/login
+- POST /api/auth/register
+- POST /api/members/register
+- GET /api/members/search?phone=...
+- GET /api/members
+- POST /api/purchases
+- POST /api/redemptions
+- POST /api/clock
+- GET /outbox
+- GET /health
+
+Example:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+```
+
+Then use the returned token in the Authorization header:
+
+```bash
+curl -H "Authorization: Bearer <token>" http://127.0.0.1:8000/api/members
+```
+
+---
+
+### 4) Best quick verification command
+
+Run this to confirm the app is healthy:
+
+```bash
+curl -fsS http://127.0.0.1:8000/health
+```
+
+Expected response:
+
+```json
+{"status":"ok","database":"/workspaces/auriga-cafe-rewards/cafe_rewards.db"}
+```
+
+---
+
+### 5) Validate the actual business logic with tests
+
+Project tests are already in place:
+
+```bash
+cd /workspaces/auriga-cafe-rewards && pytest -q
+```
+
+This checks:
+- registration
+- purchase logic
+- platinum tier
+- redemption flow
+- expiry logic
+- pagination and sorting
+
+If you want, I can also give you a short “feature checklist” you can use while manually testing the app in the browser.
