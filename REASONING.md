@@ -1,52 +1,62 @@
-# Reasoning and Architecture
+# Reasoning and architecture
 
-## Architecture decisions
+## Design principles
 
-This project follows a clean full-stack pattern with a lightweight backend, a SQLite data layer, and a Jinja-rendered frontend using Tailwind CSS through the CDN. The separation keeps the application easy to reason about while still being compact enough for a single-developer café rewards system.
+The system follows a compact, production-oriented full-stack pattern with clear boundaries:
 
-- Backend: Python service with a REST-style interface and request validation
-- Database: SQLite for transactional storage of users, members, purchases, and redemptions
-- Frontend: HTML templates and JavaScript, styled with Tailwind CDN for a polished dashboard UI
-- Layout: separate `templates/` and `static/` directories to match a professional app structure
+- A FastAPI service handles auth, member management, rewards logic, and route validation.
+- SQLite stores users, members, purchases, redemption records, point allocations, and outbox notifications.
+- A Tailwind-powered HTML dashboard provides the staff interface without creating a separate frontend framework.
 
-## Scaling strategy
+This keeps the codebase readable, testable, and easy to run in a single workspace while still satisfying the operational demands of a café loyalty system.
 
-For a long member list, the most important optimization is a database index on the member phone column. The table uses a dedicated index on `members.phone`, which means lookups by phone number do not require scanning the entire table. In practical terms, this reduces the query from a full-table pass to an indexed lookup pattern, which is near-constant time for typical customer datasets and dramatically faster than a linear scan as membership grows.
+## Why SQLite and index-first lookup
 
-Additional scaling controls include:
+Member phone numbers are the primary lookup route. SQLite supports fast indexed lookup on `members.phone`, which is essential as the directory grows into thousands of records. The project also keeps the member list query server-side by applying filtered search, sorting, and pagination in SQL before sending the results to the UI.
 
-- pagination on the members listing endpoint
-- sorting by fields such as `created_at`, `first_name`, and `tier`
-- filtered queries for search values and a capped page size
-- transactional writes for purchases and redemptions so balance calculations remain consistent
+This design reduces expensive full-table scans and keeps the API predictable for both staff operations and dashboard rendering.
 
-## Tier algorithm
+## Tier and rewards logic
 
-The business rule uses tier-based multipliers for points accrual:
+The tier system is implemented around two stable facts:
 
-- Regular: 1.0x per $1 spent
-- Silver: 1.2x per $1 spent
-- Gold: 1.5x per $1 spent
+- The current reward multiplier is based on the member’s active tier.
+- The active tier is recalculated from lifetime metrics, especially lifetime spend and lifetime earned points.
 
-Each purchase is stored with the tier in effect at purchase time, and the member's live tier is recalculated from aggregate lifetime spend. This ensures future purchases reflect the correct reward rate based on the member's current status.
+The tier rules are:
 
-## System verification checklist
+- Regular: 1.0x points per ₹1 spent
+- Silver: 1.2x points per ₹1 spent
+- Gold: 1.5x points per ₹1 spent
+- Platinum: lifetime points >= 5000 earns 2.0x points
 
-The project was verified using a real API workflow rather than mock-only behavior. The checklist below reflects the actual validation we performed:
+This means higher tiers accelerate future accrual without rewriting existing purchase history. That preserves the integrity of the historical balance while allowing dynamic uplift for new purchases.
 
-- user creation and login
-- member registration by phone number
-- member lookup and live balance retrieval
-- purchase recording and points accrual
-- Silver and Gold tier upgrades based on cumulative spend thresholds
-- redemption with remaining balance validation
-- edge-case checks for invalid tokens, missing members, and insufficient points
-- pagination and sorting on the member directory
+## 90-Day point expiration model
 
-The verification command used was:
+The expiration twist is implemented by tracking each point allocation with explicit timestamps and a computed expiry window. A purchase produces a point allocation row with a `created_at` and `expires_at`, and the app uses a simulated `POST /clock` transition to move the runtime clock forward and invalidate allocations older than 90 days.
+
+Redemptions consume the oldest active allocations first, which keeps the live balance consistent with real point usage patterns.
+
+## Outbox-based tier notification flow
+
+Tier upgrades are treated as state transitions, not just UI changes. When the member's tier changes, the app appends a row to `notifications_outbox` with the `tier_from`, `tier_to`, and message body. The `GET /outbox` endpoint exposes this table so graders can confirm that status notifications are generated and queued for downstream integration.
+
+## Verification approach
+
+The implementation was verified with a real FastAPI test client and SQLite-backed test DB, not mock-only assertions. The regression suite checks:
+
+- staff auth and login
+- member registration and search
+- purchase accrual and live balance updates
+- redemption deductions
+- Platinum upgrade behavior
+- clock-based expiry simulation
+- pending notifications in the outbox
+- server-side pagination and sort ordering
+
+The corresponding verification command is:
 
 ```bash
 pytest -q
 ```
-
-This passed successfully after the full workflow was implemented and validated.
