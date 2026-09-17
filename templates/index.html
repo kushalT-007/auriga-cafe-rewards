@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auriga Cafe Rewards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#f8f5ef',
+                100: '#f0e7d8',
+                500: '#8b5e34',
+                700: '#5d3c24',
+                900: '#2d1a12',
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-stone-100 text-stone-800">
+    <header class="bg-brand-900 text-white shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="text-sm uppercase tracking-[0.2em] text-brand-100">Auriga Cafe</p>
+          <h1 class="text-3xl font-bold">Rewards Programme</h1>
+        </div>
+        <nav class="flex gap-2 text-sm">
+          <a href="#overview" class="px-3 py-2 rounded-md hover:bg-white/10">Overview</a>
+          <a href="#dashboard" class="px-3 py-2 rounded-md hover:bg-white/10">Dashboard</a>
+          <button id="logoutBtn" class="hidden px-3 py-2 rounded-md bg-white/10 hover:bg-white/20">Logout</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-10">
+      <section id="overview" class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] items-center mb-10">
+        <div class="bg-white rounded-2xl shadow-sm p-8 border border-stone-200">
+          <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-semibold uppercase tracking-wide">Member loyalty</span>
+          <h2 class="mt-4 text-4xl font-bold leading-tight">Turn every visit into points, perks, and premium experiences.</h2>
+          <p class="mt-4 text-lg text-stone-600">Members earn faster at higher tiers, redeem rewards instantly, and enjoy a seamless café rewards experience from the first purchase onward.</p>
+          <div class="mt-6 flex gap-3 flex-wrap">
+            <a href="#dashboard" class="px-5 py-3 rounded-lg bg-brand-700 text-white font-semibold hover:bg-brand-900">Open staff dashboard</a>
+            <button id="demoLoginBtn" class="px-5 py-3 rounded-lg border border-brand-700 text-brand-700 font-semibold hover:bg-brand-50">Use demo admin login</button>
+          </div>
+          <div class="mt-8 grid grid-cols-3 gap-4 text-center">
+            <div class="bg-stone-50 rounded-xl p-4">
+              <div class="text-2xl font-bold text-brand-700">1.0x</div>
+              <div class="text-sm text-stone-500">Regular</div>
+            </div>
+            <div class="bg-stone-50 rounded-xl p-4">
+              <div class="text-2xl font-bold text-brand-700">1.2x</div>
+              <div class="text-sm text-stone-500">Silver</div>
+            </div>
+            <div class="bg-stone-50 rounded-xl p-4">
+              <div class="text-2xl font-bold text-brand-700">1.5x</div>
+              <div class="text-sm text-stone-500">Gold</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-brand-50 rounded-2xl border border-brand-100 p-6 shadow-sm">
+          <h3 class="text-xl font-semibold text-brand-900">Program Snapshot</h3>
+          <ul class="mt-5 space-y-4 text-stone-700">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-700"></span>
+              <span>Fast member lookup by phone number for a long loyalty list.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-700"></span>
+              <span>Tier progression and multiplier-aware point earnings.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 h-2.5 w-2.5 rounded-full bg-brand-700"></span>
+              <span>Real-time balance checks and one-click reward redemption.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="dashboard" class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <aside class="space-y-6">
+          <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+            <h3 class="text-xl font-semibold text-stone-900">Staff Login</h3>
+            <form id="loginForm" class="mt-4 space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-stone-600 mb-1">Username</label>
+                <input id="loginUsername" type="text" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="admin" required />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-600 mb-1">Password</label>
+                <input id="loginPassword" type="password" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="admin123" required />
+              </div>
+              <button type="submit" class="w-full rounded-lg bg-brand-700 text-white py-2.5 font-semibold hover:bg-brand-900">Login</button>
+            </form>
+            <div id="loginNotice" class="mt-4 hidden rounded-md px-3 py-2 text-sm"></div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+            <h3 class="text-xl font-semibold text-stone-900">Register New Member</h3>
+            <form id="memberRegisterForm" class="mt-4 space-y-4">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">First name</label>
+                  <input id="memberFirstName" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Last name</label>
+                  <input id="memberLastName" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" required />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-600 mb-1">Phone</label>
+                <input id="memberPhone" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="+1-415-555-0147" required />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-600 mb-1">Email</label>
+                <input id="memberEmail" type="email" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="member@example.com" />
+              </div>
+              <button type="submit" class="w-full rounded-lg bg-stone-900 text-white py-2.5 font-semibold hover:bg-stone-700">Create Member</button>
+            </form>
+            <div id="memberNotice" class="mt-4 hidden rounded-md px-3 py-2 text-sm"></div>
+          </div>
+        </aside>
+
+        <div class="space-y-6">
+          <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h3 class="text-xl font-semibold text-stone-900">Member Search</h3>
+                <p class="text-sm text-stone-500">Use phone lookup to instantly view account data.</p>
+              </div>
+              <div class="flex gap-2">
+                <input id="searchPhone" type="text" class="w-64 rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="Search phone number" />
+                <button id="searchMemberBtn" class="rounded-lg bg-brand-700 text-white px-4 py-2 font-semibold hover:bg-brand-900">Search</button>
+              </div>
+            </div>
+
+            <div id="memberCard" class="mt-6 hidden rounded-2xl border border-brand-100 bg-brand-50 p-5">
+              <div class="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+                <div>
+                  <p id="memberName" class="text-2xl font-bold text-brand-900">Member</p>
+                  <p id="memberMeta" class="text-sm text-brand-700"></p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs uppercase tracking-[0.2em] text-stone-500">Current tier</p>
+                  <p id="memberTier" class="text-xl font-bold text-brand-700"></p>
+                </div>
+              </div>
+              <div class="mt-5 grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div class="rounded-xl bg-white p-3">
+                  <p class="text-xs uppercase tracking-wide text-stone-500">Balance</p>
+                  <p id="memberBalance" class="mt-2 text-2xl font-bold text-stone-900">0</p>
+                </div>
+                <div class="rounded-xl bg-white p-3">
+                  <p class="text-xs uppercase tracking-wide text-stone-500">Lifetime spend</p>
+                  <p id="memberSpend" class="mt-2 text-2xl font-bold text-stone-900">0</p>
+                </div>
+                <div class="rounded-xl bg-white p-3">
+                  <p class="text-xs uppercase tracking-wide text-stone-500">Phone</p>
+                  <p id="memberPhoneDisplay" class="mt-2 text-lg font-bold text-stone-900">N/A</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+              <h3 class="text-xl font-semibold text-stone-900">Record Sale</h3>
+              <form id="purchaseForm" class="mt-4 space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Member ID or phone</label>
+                  <input id="purchaseMember" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="member id or +1-415-555-0147" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Amount</label>
+                  <input id="purchaseAmount" type="number" step="0.01" min="0.01" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="35.00" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Notes</label>
+                  <input id="purchaseNotes" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="Coffee + pastry" />
+                </div>
+                <button type="submit" class="w-full rounded-lg bg-emerald-600 text-white py-2.5 font-semibold hover:bg-emerald-700">Add purchase</button>
+              </form>
+              <div id="purchaseNotice" class="mt-4 hidden rounded-md px-3 py-2 text-sm"></div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+              <h3 class="text-xl font-semibold text-stone-900">Redeem Reward</h3>
+              <form id="redemptionForm" class="mt-4 space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Member ID or phone</label>
+                  <input id="redemptionMember" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="member id or +1-415-555-0147" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Item</label>
+                  <input id="redemptionItem" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="Latte" required />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-stone-600 mb-1">Points</label>
+                  <input id="redemptionPoints" type="number" step="1" min="1" class="w-full rounded-lg border border-stone-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-700" placeholder="50" required />
+                </div>
+                <button type="submit" class="w-full rounded-lg bg-amber-500 text-white py-2.5 font-semibold hover:bg-amber-600">Redeem points</button>
+              </form>
+              <div id="redemptionNotice" class="mt-4 hidden rounded-md px-3 py-2 text-sm"></div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-xl font-semibold text-stone-900">Member Directory</h3>
+                <p class="text-sm text-stone-500">Search, sort, and paginate across the full members list.</p>
+              </div>
+              <button id="refreshMembersBtn" class="rounded-lg border border-stone-300 px-3 py-2 text-sm font-medium hover:bg-stone-50">Refresh</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-stone-200 bg-stone-50">
+                    <th class="px-3 py-3 text-xs uppercase tracking-wide text-stone-500">Name</th>
+                    <th class="px-3 py-3 text-xs uppercase tracking-wide text-stone-500">Phone</th>
+                    <th class="px-3 py-3 text-xs uppercase tracking-wide text-stone-500">Tier</th>
+                    <th class="px-3 py-3 text-xs uppercase tracking-wide text-stone-500">Balance</th>
+                    <th class="px-3 py-3 text-xs uppercase tracking-wide text-stone-500">Spend</th>
+                  </tr>
+                </thead>
+                <tbody id="membersTableBody"></tbody>
+              </table>
+            </div>
+            <div id="paginationControls" class="mt-4 flex justify-between items-center text-sm text-stone-600"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        token: localStorage.getItem('cafe_token') || '',
+        page: 1,
+        pageSize: 10,
+        sortBy: 'created_at',
+        sortDir: 'desc',
+      };
+
+      const loginForm = document.getElementById('loginForm');
+      const memberRegisterForm = document.getElementById('memberRegisterForm');
+      const purchaseForm = document.getElementById('purchaseForm');
+      const redemptionForm = document.getElementById('redemptionForm');
+      const memberCard = document.getElementById('memberCard');
+      const loginNotice = document.getElementById('loginNotice');
+      const memberNotice = document.getElementById('memberNotice');
+      const purchaseNotice = document.getElementById('purchaseNotice');
+      const redemptionNotice = document.getElementById('redemptionNotice');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      function setNotice(element, message, type = 'info') {
+        element.classList.remove('hidden');
+        element.className = `mt-4 rounded-md px-3 py-2 text-sm ${
+          type === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
+          type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+          'bg-blue-50 text-blue-700 border border-blue-200'
+        }`;
+        element.textContent = message;
+      }
+
+      function clearNotice(element) {
+        element.textContent = '';
+        element.classList.add('hidden');
+      }
+
+      function authHeaders() {
+        return {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${state.token}`,
+        };
+      }
+
+      function renderAuthState() {
+        const isLoggedIn = Boolean(state.token);
+        loginForm.classList.toggle('hidden', isLoggedIn);
+        logoutBtn.classList.toggle('hidden', !isLoggedIn);
+        document.getElementById('memberRegisterForm').querySelector('button').disabled = !isLoggedIn;
+      }
+
+      function setMemberCard(member) {
+        if (!member) {
+          memberCard.classList.add('hidden');
+          return;
+        }
+        memberCard.classList.remove('hidden');
+        document.getElementById('memberName').textContent = `${member.first_name} ${member.last_name}`;
+        document.getElementById('memberMeta').textContent = `Created ${new Date(member.created_at).toLocaleDateString()}`;
+        document.getElementById('memberTier').textContent = member.tier;
+        document.getElementById('memberBalance').textContent = member.points_balance;
+        document.getElementById('memberSpend').textContent = `$${Number(member.lifetime_spend).toFixed(2)}`;
+        document.getElementById('memberPhoneDisplay').textContent = member.phone;
+      }
+
+      async function loadMembers() {
+        if (!state.token) return;
+        const query = new URLSearchParams({
+          page: String(state.page),
+          page_size: String(state.pageSize),
+          sort_by: state.sortBy,
+          sort_dir: state.sortDir,
+        });
+        const response = await fetch(`/api/members?${query}`, {
+          headers: authHeaders(),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          setNotice(memberNotice, payload.detail || 'Unable to load members.', 'error');
+          return;
+        }
+
+        const rows = payload.items || [];
+        const tbody = document.getElementById('membersTableBody');
+        tbody.innerHTML = rows.map((member) => `
+          <tr class="border-b border-stone-200 hover:bg-stone-50">
+            <td class="px-3 py-3 font-medium text-stone-900">${member.first_name} ${member.last_name}</td>
+            <td class="px-3 py-3 text-stone-600">${member.phone}</td>
+            <td class="px-3 py-3"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${member.tier === 'Gold' ? 'bg-amber-100 text-amber-800' : member.tier === 'Silver' ? 'bg-slate-200 text-slate-700' : 'bg-stone-200 text-stone-600'}">${member.tier}</span></td>
+            <td class="px-3 py-3 text-stone-700">${member.points_balance}</td>
+            <td class="px-3 py-3 text-stone-700">$${Number(member.lifetime_spend).toFixed(2)}</td>
+          </tr>
+        `).join('');
+
+        const pagination = document.getElementById('paginationControls');
+        const prevDisabled = state.page === 1 ? 'disabled' : '';
+        const nextDisabled = state.page >= payload.pages ? 'disabled' : '';
+        pagination.innerHTML = `
+          <button data-page="prev" ${prevDisabled} class="rounded-lg border border-stone-300 px-3 py-2 hover:bg-stone-50 disabled:opacity-50">Previous</button>
+          <span>Page ${payload.page} of ${payload.pages || 1}</span>
+          <button data-page="next" ${nextDisabled} class="rounded-lg border border-stone-300 px-3 py-2 hover:bg-stone-50 disabled:opacity-50">Next</button>
+        `;
+      }
+
+      loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          setNotice(loginNotice, payload.detail || 'Login failed.', 'error');
+          return;
+        }
+        state.token = payload.token;
+        localStorage.setItem('cafe_token', payload.token);
+        renderAuthState();
+        clearNotice(loginNotice);
+        await loadMembers();
+      });
+
+      document.getElementById('demoLoginBtn').addEventListener('click', () => {
+        document.getElementById('loginUsername').value = 'admin';
+        document.getElementById('loginPassword').value = 'admin123';
+        loginForm.requestSubmit();
+      });
+
+      logoutBtn.addEventListener('click', () => {
+        state.token = '';
+        localStorage.removeItem('cafe_token');
+        renderAuthState();
+        clearNotice(memberNotice);
+        clearNotice(purchaseNotice);
+        clearNotice(redemptionNotice);
+        memberCard.classList.add('hidden');
+      });
+
+      memberRegisterForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = {
+          first_name: document.getElementById('memberFirstName').value.trim(),
+          last_name: document.getElementById('memberLastName').value.trim(),
+          phone: document.getElementById('memberPhone').value.trim(),
+          email: document.getElementById('memberEmail').value.trim(),
+        };
+        const response = await fetch('/api/members/register', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          setNotice(memberNotice, result.detail || 'Member registration failed.', 'error');
+          return;
+        }
+        setNotice(memberNotice, `Member ${result.member.first_name} ${result.member.last_name} registered successfully.`, 'success');
+        memberRegisterForm.reset();
+        await loadMembers();
+      });
+
+      document.getElementById('searchMemberBtn').addEventListener('click', async () => {
+        const phone = document.getElementById('searchPhone').value.trim();
+        if (!phone) {
+          setNotice(memberNotice, 'Enter a phone number to search.', 'error');
+          return;
+        }
+        const response = await fetch(`/api/members/search?phone=${encodeURIComponent(phone)}`, {
+          headers: authHeaders(),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          setNotice(memberNotice, result.detail || 'Member not found.', 'error');
+          memberCard.classList.add('hidden');
+          return;
+        }
+        setMemberCard(result.member);
+        clearNotice(memberNotice);
+      });
+
+      purchaseForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const details = {
+          member_id: Number(document.getElementById('purchaseMember').value) || null,
+          phone: document.getElementById('purchaseMember').value.trim(),
+          amount: Number(document.getElementById('purchaseAmount').value),
+          notes: document.getElementById('purchaseNotes').value.trim(),
+        };
+        if (!details.amount || details.amount <= 0) {
+          setNotice(purchaseNotice, 'Enter a valid purchase amount greater than 0.', 'error');
+          return;
+        }
+        const response = await fetch('/api/purchases', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(details),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          setNotice(purchaseNotice, result.detail || 'Purchase could not be recorded.', 'error');
+          return;
+        }
+        setNotice(purchaseNotice, `Purchase recorded: ${result.points_earned} points earned.`, 'success');
+        purchaseForm.reset();
+        await loadMembers();
+      });
+
+      redemptionForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const details = {
+          member_id: Number(document.getElementById('redemptionMember').value) || null,
+          phone: document.getElementById('redemptionMember').value.trim(),
+          item_name: document.getElementById('redemptionItem').value.trim(),
+          points: Number(document.getElementById('redemptionPoints').value),
+        };
+        if (!details.item_name || !details.points || details.points <= 0) {
+          setNotice(redemptionNotice, 'Provide a valid item name and redeemable points.', 'error');
+          return;
+        }
+        const response = await fetch('/api/redemptions', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(details),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          setNotice(redemptionNotice, result.detail || 'Redemption failed.', 'error');
+          return;
+        }
+        setNotice(redemptionNotice, `Redeemed ${result.points_redeemed} points for ${result.item_name}. Remaining balance: ${result.remaining_balance}.`, 'success');
+        redemptionForm.reset();
+        await loadMembers();
+      });
+
+      document.getElementById('paginationControls').addEventListener('click', async (event) => {
+        const button = event.target.closest('button[data-page]');
+        if (!button) return;
+        if (button.dataset.page === 'prev') {
+          state.page = Math.max(1, state.page - 1);
+        }
+        if (button.dataset.page === 'next') {
+          state.page += 1;
+        }
+        await loadMembers();
+      });
+
+      document.getElementById('refreshMembersBtn').addEventListener('click', async () => {
+        await loadMembers();
+      });
+
+      renderAuthState();
+      if (state.token) {
+        loadMembers();
+      }
+    </script>
+  </body>
+</html>
